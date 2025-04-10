@@ -5,7 +5,7 @@ import { Stack, Box, Typography, Chip, Paper } from "@mui/material";
 import Image from "next/image";
 import { capitalizeWord } from "../../lib/CapatializeWord";
 import ApiManager from "../../lib/ApiManager/ApiManager";
-import { categoryType, productType } from "../../lib/ApiManager/ApiManager";
+import { productType } from "../../../page.tsx";
 import Link from "next/link";
 import BackButton from "../../ui/components/BackButton";
 export default async function page({
