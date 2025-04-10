@@ -5,7 +5,7 @@ import { Stack, Box, Typography, Chip, Paper } from "@mui/material";
 import Image from "next/image";
 import { capitalizeWord } from "../../lib/CapatializeWord";
 import ApiManager from "../../lib/ApiManager/ApiManager";
-import { productType } from "../../../page.tsx";
+// import { productType } from "../../../page.tsx";
 import Link from "next/link";
 import BackButton from "../../ui/components/BackButton";
 export default async function page({
@@ -25,7 +25,7 @@ export default async function page({
       </Typography>
       <Box className={styles.productContainer}>
         {categoryRelatedProducts?.products?.map(
-          (product: productType, index: number) => (
+          (product: any, index: number) => (
             <Paper
               elevation={5}
               key={index}
