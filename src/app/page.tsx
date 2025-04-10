@@ -1,95 +1,82 @@
+import ApiManager from "./lib/ApiManager/ApiManager";
+import { capitalizeWord } from "./lib/CapatializeWord";
+import styles from "./ui/page.module.css";
+import { Star } from "@mui/icons-material";
+import { Chip, Typography, Box, Paper, Stack } from "@mui/material";
 import Image from "next/image";
-import styles from "./page.module.css";
-
-export default function Home() {
+import Link from "next/link";
+export default async function Home() {
+  const products = await ApiManager({ path: "products", method: "get" });
+  const categories = await ApiManager({ path: "products/categories", method: "get" });
+  console.log("🚀 ~ Home ~ products:", products)
+  console.log("🚀 ~ Home ~ categories:", categories)
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Box className={styles.page}>
+      <Typography variant={'h4'} sx={{ textAlign: 'center', mb: 4 }} fontWeight='bold'>Categories ({categories?.length || 0})</Typography>
+      <Box className={styles.productContainer}>
+        {categories?.map((category: categoryType, index: number) => (
+          <Link href={`/products/${category?.slug}`}>
+            <Chip
+              key={index}
+              label={capitalizeWord(category?.name)}
+              sx={{
+                bgcolor: 'lightGrey',
+                cursor: 'pointer',
+                '&:hover': {
+                  boxShadow: 5
+                }
+              }}
+            /></Link>
+        ))}
+      </Box>
+      <Typography variant={'h4'} sx={{ textAlign: 'center', mb: 4 }} fontWeight='bold'>Products ({products?.products?.length || 0})</Typography>
+      <Box className={styles.productContainer}>
+        {products?.products?.map((product: productType, index: number) => (
+          <Paper
+            elevation={5}
+            key={index}
+            sx={{
+              bgcolor: 'lightGrey',
+              '&:hover': {
+                boxShadow: 15
+              }
+            }}
+            className={styles.product}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            <Image src={product?.thumbnail} width={200} height={200} alt={'no image'} />
+            <Typography variant='h5' fontWeight='550'>{product.title}</Typography>
+            <Typography>{product.description}</Typography>
+            <Stack direction='row' justifyContent='space-between' width='100%'>
+              <Typography>Price: ${product.price || 0}</Typography>
+              <Typography>Rating: <Star sx={{ color: 'yellow' }} />{product.rating || 0}</Typography>
+            </Stack>
+            <Typography>Discount Percentage: {product.discountPercentage}%</Typography>
+            <Stack direction='row' justifyContent='space-between' width='100%'>
+              <Typography>Stock: {product.stock}</Typography>
+              <Typography>Category: <Chip color='primary' label={capitalizeWord(product?.category || '--')} /></Typography>
+            </Stack>
+            <Typography>Brand: {product.brand}</Typography>
+            {/* <p>Images: {product.images}</p> */}
+          </Paper>
+        ))}
+      </Box>
+    </Box>
   );
 }
+export type productType = {
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
+};
+export type categoryType = {
+  name: string;
+  slug: string;
+  url: string;
+};
