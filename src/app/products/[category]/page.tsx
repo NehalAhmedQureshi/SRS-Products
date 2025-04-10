@@ -10,9 +10,7 @@ import Link from "next/link";
 import BackButton from "../../ui/components/BackButton";
 export default async function page({
   params,
-}: {
-  params: { category: string };
-}) {
+}:any) {
   const category = params?.category;
   const categoryRelatedProducts = await ApiManager({
     path: `products/category/${category}`,
